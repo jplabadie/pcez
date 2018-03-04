@@ -22,14 +22,20 @@ public class IMUmanager {
 
         enableMag();
         for(int i=0; i < 20; i++){
-            byte[] block = readMagReg( 0x08 );
-            System.out.print("Magnetometer: ");
-            for(int x=0; x<6; x++) {
-                System.out.print( block[x] );
-            }
-            System.out.println();
+            System.out.println("Temp:" + readTemp());
                      Thread.sleep(1000);
         }
+    }
+
+    private static double readTemp(){
+        double temp = 0.0;
+        try {
+            temp = bgi_mag.read( 0x05 );
+            bgi_mag.read( 0x06);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return temp;
     }
 
     private static void enableMag(){
