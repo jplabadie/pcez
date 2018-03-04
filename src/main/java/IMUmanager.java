@@ -22,9 +22,13 @@ public class IMUmanager {
 
         enableMag();
         for(int i=0; i < 20; i++){
-            int a = readMagReg( 0x08 );
-            System.out.println( "Magnetometer XLM = " + a);
-            Thread.sleep(1000);
+            byte[] block = readMagReg( 0x08 );
+            System.out.print("Magnetometer: ");
+            for(int x=0; x<6; x++) {
+                System.out.print( block[x] );
+            }
+            System.out.println();
+                     Thread.sleep(1000);
         }
     }
 
@@ -55,11 +59,15 @@ public class IMUmanager {
         }
     }
 
-    private static int readMagReg( int register ){
+    private static byte[] readMagReg( int register ){
+        byte[] block = new byte[6];
         try {
-            return bgi_mag.read( register );
+
+            bgi_mag.read( block,6,register );
+            return block;
         } catch (IOException e) {
-            return -1;
+            System.out.println("shucks");
+            return block;
         }
     }
 }
