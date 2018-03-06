@@ -31,7 +31,7 @@ public class IMUmanager {
             Thread.sleep(1000);
         }
 
-        enableMag();
+        enableAcc();
         System.out.println("Acc Status "+ bgi_acc.read(0x27));
         System.out.println("Temp "+ readTemp());
         for(int i=0; i < 10; i++){
