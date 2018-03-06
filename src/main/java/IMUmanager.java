@@ -23,10 +23,19 @@ public class IMUmanager {
         bgi_bar = bus.getDevice(0x77);
 
         enableMag();
-        System.out.println("Status "+ bgi_mag.read(0x24));
+        System.out.println("Mag Status "+ bgi_mag.read(0x07));
         System.out.println("Temp "+ readTemp());
         for(int i=0; i < 10; i++){
-            double[] vars = readMagReg(0x08);
+            int[] vars = readMagReg(0x08);
+            System.out.println("X:"+ vars[0] + " Y:"+ vars[1] + " Z:"+ vars[2]);
+            Thread.sleep(1000);
+        }
+
+        enableMag();
+        System.out.println("Acc Status "+ bgi_acc.read(0x27));
+        System.out.println("Temp "+ readTemp());
+        for(int i=0; i < 10; i++){
+            int[] vars = readAccReg(0x28);
             System.out.println("X:"+ vars[0] + " Y:"+ vars[1] + " Z:"+ vars[2]);
             Thread.sleep(1000);
         }
@@ -52,8 +61,8 @@ public class IMUmanager {
     }
 
     private static void enableAcc(){
-        writeAccReg( (byte)0x24,(byte) 0b01100111 );
-        writeAccReg( (byte)0x25,(byte) 0b00100000 );
+        writeAccReg( 0x24, 0b01100111 );
+        writeAccReg( 0x25, 0b00100000 );
     }
 
     private static void writeMagReg( int register, int value ){
@@ -65,19 +74,34 @@ public class IMUmanager {
         }
     }
 
-    private static void writeAccReg( byte register, byte value ){
+    private static void writeAccReg( int register, int value ){
         try {
-            bgi_acc.write(register,value);
+            bgi_acc.write(register,(byte)value);
         } catch (IOException e) {
             System.out.println("Failed to write to Acc Register");
         }
     }
 
-    private static double[] readMagReg( int register ){
+    private static int[] readMagReg( int register ){
         byte[] block = new byte[6];
-        double[] vars = {0.0,0.0,0.00};
+        int[] vars = {0,0,0};
         try {
             bgi_mag.read( register,block,0,6 );
+            vars[0] = (block[1]<<8)|block[0];
+            vars[1] = (block[3]<<8)|block[2];
+            vars[2] = (block[4]<<8)|block[5];
+            return vars ;
+        } catch (IOException e) {
+            System.out.println("shucks");
+            return vars;
+        }
+    }
+
+    private static int[] readAccReg( int register ){
+        byte[] block = new byte[6];
+        int[] vars = {0,0,0};
+        try {
+            bgi_acc.read( register,block,0,6 );
             vars[0] = (block[1]<<8)|block[0];
             vars[1] = (block[3]<<8)|block[2];
             vars[2] = (block[4]<<8)|block[5];
