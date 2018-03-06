@@ -26,7 +26,8 @@ public class IMUmanager {
         System.out.println("Status "+ bgi_mag.read(0x24));
         System.out.println("Temp "+ readTemp());
         for(int i=0; i < 10; i++){
-
+            double[] vars = readMagReg(0x08);
+            System.out.println("X:"+ vars[0] + " Y:"+ vars[1] + " Z:"+ vars[2]);
             Thread.sleep(1000);
         }
     }
@@ -71,14 +72,19 @@ public class IMUmanager {
         }
     }
 
-    private static byte[] readMagReg( int register ){
+    private static double[] readMagReg( int register ){
         byte[] block = new byte[6];
+        double[] vars = {0.0,0.0,0.00};
         try {
-            bgi_mag.read( block,6,register );
-            return block;
+            bgi_mag.read( register,block,0,6 );
+            vars[0] = (block[1]<<8)|block[0];
+            vars[1] = (block[3]<<8)|block[2];
+            vars[2] = (block[4]<<8)|block[5];
+            return vars ;
         } catch (IOException e) {
             System.out.println("shucks");
-            return block;
+            return vars;
         }
     }
+
 }
