@@ -13,25 +13,30 @@ public class IMUmanager {
     private static I2CBus bus ;
     private static I2CDevice bgi_mag;
     private static I2CDevice bgi_acc;
+    private static I2CDevice bgi_bar;
 
     public static void main(String[] args) throws InterruptedException, IOException, I2CFactory.UnsupportedBusNumberException {
 
         bus = I2CFactory.getInstance(I2CBus.BUS_1);
         bgi_mag = bus.getDevice(0x1c);
         bgi_acc = bus.getDevice(0x6a);
+        bgi_bar = bus.getDevice(0x77);
 
         enableMag();
-        for(int i=0; i < 20; i++){
-            System.out.println("Temp:" + readTemp());
-                     Thread.sleep(1000);
+        System.out.println("Status "+ bgi_mag.read(0x24));
+        System.out.println("Status "+ bgi_mag.read(0x25));
+        System.out.println("Status "+ bgi_mag.read(0x26));
+        for(int i=0; i < 10; i++){
+
+            Thread.sleep(1000);
         }
     }
 
     private static double readTemp(){
         double temp = 0.0;
         try {
-            temp = bgi_mag.read( 0x05 );
-            bgi_mag.read( 0x06);
+            temp = bgi_mag.read( 0x06 );
+            bgi_mag.read( 0x05);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -68,7 +73,6 @@ public class IMUmanager {
     private static byte[] readMagReg( int register ){
         byte[] block = new byte[6];
         try {
-
             bgi_mag.read( block,6,register );
             return block;
         } catch (IOException e) {
