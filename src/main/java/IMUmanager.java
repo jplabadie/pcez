@@ -24,12 +24,15 @@ public class IMUmanager {
 
         enableMag();
         enableAcc();
+        enableGyr();
         System.out.println("Temp "+ readTemp());
         for(int i=0; i < 20; i++){
-            int[] vars = readMagReg(0x08);
+            int[] vars = readMagReg(0x28);
             System.out.println("Magnetometer X:"+ vars[0] + " Y:"+ vars[1] + " Z:"+ vars[2]);
             int[] avars = readAccReg(0x28);
             System.out.println("Accelerometer X:"+ avars[0] + " Y:"+ avars[1] + " Z:"+ avars[2]);
+            int[] gvars = readAccReg(0x18);
+            System.out.println("Gyroscope X:"+ gvars[0] + " Y:"+ gvars[1] + " Z:"+ gvars[2]);
             Thread.sleep(500);
         }
     }
