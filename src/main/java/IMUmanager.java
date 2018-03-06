@@ -46,20 +46,20 @@ public class IMUmanager {
     }
 
     private static void enableMag(){
-        writeMagReg( 0x24, (byte) 0b11110000); // temp sensor enable, magnetometer hires 50Hz
-        writeMagReg( 0x25, (byte) 0b01100000); // full scale to +/- 12 Gauss
-        writeMagReg( 0x26, (byte) 0b00000000 ); // set magnetometer to continuous conversion mode
+        writeMagReg( 0x24, 0b11110000 ); // temp sensor enable, magnetometer hires 50Hz
+        writeMagReg( 0x25, 0b01100000 ); // full scale to +/- 12 Gauss
+        writeMagReg( 0x26, 0b00000000 ); // set magnetometer to continuous conversion mode
     }
 
     private static void enableAcc(){
-        writeAccReg((byte) 0x24,(byte) 0b01100111);
-        writeAccReg( (byte)0x25,(byte) 0b00100000);
+        writeAccReg( (byte)0x24,(byte) 0b01100111 );
+        writeAccReg( (byte)0x25,(byte) 0b00100000 );
     }
 
-    private static void writeMagReg( int register, byte value ){
+    private static void writeMagReg( int register, int value ){
         try {
-            System.out.println("writing to mag register: "+ register+ " value: "+(int)value);
-           bgi_mag.write(register, value);
+            System.out.println("writing to mag register: "+ register+ " value: "+value);
+           bgi_mag.write(register, (byte)value);
         } catch (IOException e) {
             System.out.println("Failed to write to Mag Register");
         }
