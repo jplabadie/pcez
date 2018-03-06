@@ -44,9 +44,9 @@ public class IMUmanager {
     }
 
     private static void enableMag(){
-        writeMagReg( (byte) 0x24, (byte)0b11110000); // temp sensor enable, magnetometer hires 50Hz
-        writeMagReg((byte) 0x25,(byte) 0b01100000); // full scale to +/- 12 Gauss
-        writeMagReg((byte) 0x26, (byte)0b00000000); // set magnetometer to continuous conversion mode
+        writeMagReg( 0x24, (byte) 0b11110000); // temp sensor enable, magnetometer hires 50Hz
+        writeMagReg( 0x25, (byte) 0b01100000); // full scale to +/- 12 Gauss
+        writeMagReg( 0x26, (byte) 0b00000000 ); // set magnetometer to continuous conversion mode
     }
 
     private static void enableAcc(){
@@ -54,9 +54,9 @@ public class IMUmanager {
         writeAccReg( (byte)0x25,(byte) 0b00100000);
     }
 
-    private static void writeMagReg( byte register, byte value ){
+    private static void writeMagReg( int register, byte value ){
         try {
-           bgi_mag.write(register,value);
+           bgi_mag.write(register, value);
         } catch (IOException e) {
             e.printStackTrace();
         }
