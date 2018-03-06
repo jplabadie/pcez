@@ -24,8 +24,7 @@ public class IMUmanager {
 
         enableMag();
         System.out.println("Status "+ bgi_mag.read(0x24));
-        System.out.println("Status "+ bgi_mag.read(0x25));
-        System.out.println("Status "+ bgi_mag.read(0x26));
+        System.out.println("Temp "+ readTemp());
         for(int i=0; i < 10; i++){
 
             Thread.sleep(1000);
@@ -35,8 +34,9 @@ public class IMUmanager {
     private static double readTemp(){
         double temp = 0.0;
         try {
-            temp = bgi_mag.read( 0x06 );
-            bgi_mag.read( 0x05);
+
+            temp = bgi_mag.read( 0x05) << 12 | bgi_mag.read( 0x06 );
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -58,7 +58,7 @@ public class IMUmanager {
         try {
            bgi_mag.write(register, value);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Failed to write to Acc Register");
         }
     }
 
@@ -66,7 +66,7 @@ public class IMUmanager {
         try {
             bgi_acc.write(register,value);
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Failed to write to Acc Register");
         }
     }
 
