@@ -55,14 +55,21 @@ public class IMUmanager {
     }
 
     private static void enableMag(){
-        writeMagReg( 0x24, 0b11110000 ); // temp sensor enable, magnetometer hires 50Hz
-        writeMagReg( 0x25, 0b01100000 ); // full scale to +/- 12 Gauss
-        writeMagReg( 0x26, 0b00000000 ); // set magnetometer to continuous conversion mode
+        writeMagReg( 0x20, 0b10011100 ); // temp sensor enable, magnetometer hires 50Hz
+        writeMagReg( 0x21, 0b01000000 ); // full scale to +/- 12 Gauss
+        writeMagReg( 0x22, 0b00000000 ); // set magnetometer to continuous conversion mode
+        writeMagReg( 0x23, 0b00000000 ); // set magnetometer to continuous conversion mode
     }
 
     private static void enableAcc(){
-        writeAccReg( 0x24, 0b01100111 );
-        writeAccReg( 0x25, 0b00100000 );
+        writeAccReg( 0x1F, 0b00111000 );
+        writeAccReg( 0x20, 0b00101000 );
+    }
+
+    private static void enableGyr(){
+        writeAccReg(0x1E,0b00111000);
+        writeAccReg(0x10,0b10111000);
+        writeAccReg(0x13,0b10111000);
     }
 
     private static void writeMagReg( int register, int value ){
