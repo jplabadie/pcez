@@ -23,21 +23,14 @@ public class IMUmanager {
         bgi_bar = bus.getDevice(0x77);
 
         enableMag();
-        System.out.println("Mag Status "+ bgi_mag.read(0x07));
-        System.out.println("Temp "+ readTemp());
-        for(int i=0; i < 10; i++){
-            int[] vars = readMagReg(0x08);
-            System.out.println("X:"+ vars[0] + " Y:"+ vars[1] + " Z:"+ vars[2]);
-            Thread.sleep(1000);
-        }
-
         enableAcc();
-        System.out.println("Acc Status "+ bgi_acc.read(0x27));
         System.out.println("Temp "+ readTemp());
-        for(int i=0; i < 10; i++){
-            int[] vars = readAccReg(0x28);
-            System.out.println("X:"+ vars[0] + " Y:"+ vars[1] + " Z:"+ vars[2]);
-            Thread.sleep(1000);
+        for(int i=0; i < 20; i++){
+            int[] vars = readMagReg(0x08);
+            System.out.println("Magnetometer X:"+ vars[0] + " Y:"+ vars[1] + " Z:"+ vars[2]);
+            int[] avars = readAccReg(0x28);
+            System.out.println("Accelerometer X:"+ avars[0] + " Y:"+ avars[1] + " Z:"+ avars[2]);
+            Thread.sleep(500);
         }
     }
 
@@ -45,7 +38,7 @@ public class IMUmanager {
         double temperature = 0.0;
         byte[] buff = new byte[2];
         try {
-            bgi_mag.read(0x05,buff,0,2);
+            bgi_mag.read(0x15,buff,0,2);
             temperature = (buff[1]<<12 | buff[0]<<4) >>4;
 
         } catch (IOException e) {
@@ -67,9 +60,9 @@ public class IMUmanager {
     }
 
     private static void enableGyr(){
-        writeAccReg(0x1E,0b00111000);
-        writeAccReg(0x10,0b10111000);
-        writeAccReg(0x13,0b10111000);
+        writeAccReg(0x1E, 0b00111000);
+        writeAccReg(0x10, 0b10111000);
+        writeAccReg(0x13, 0b10111000);
     }
 
     private static void writeMagReg( int register, int value ){
