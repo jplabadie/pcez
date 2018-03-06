@@ -58,9 +58,10 @@ public class IMUmanager {
 
     private static void writeMagReg( int register, byte value ){
         try {
+            System.out.println("writing to mag register: "+ register+ " value: "+value);
            bgi_mag.write(register, value);
         } catch (IOException e) {
-            System.out.println("Failed to write to Acc Register");
+            System.out.println("Failed to write to Mag Register");
         }
     }
 
