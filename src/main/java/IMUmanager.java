@@ -32,15 +32,16 @@ public class IMUmanager {
     }
 
     private static double readTemp(){
-        double temp = 0.0;
+        double temperature = 0.0;
+        byte[] buff = new byte[2];
         try {
-
-            temp = bgi_mag.read( 0x05) << 12 | bgi_mag.read( 0x06 );
+            bgi_mag.read(0x05,buff,0,2);
+            temperature = (buff[1]<<12 | buff[0]<<4) >>4;
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return temp;
+        return temperature;
     }
 
     private static void enableMag(){
