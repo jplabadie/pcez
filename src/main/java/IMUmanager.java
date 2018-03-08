@@ -4,6 +4,7 @@ import com.pi4j.io.i2c.I2CDevice;
 import com.pi4j.io.i2c.I2CFactory;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 /**
  * @author Jean-Paul Labadie
@@ -44,7 +45,8 @@ public class IMUmanager {
 //            int[] avars = readAccReg(0x28);
 //            System.out.println("Accelerometer X:"+ avars[0] + " Y:"+ avars[1] + " Z:"+ avars[2]);
             updateGyroDPS();
-            System.out.println("Gyroscope X:" + gxa + " Y:" + gya + " Z:" + gza);
+            DecimalFormat df = new DecimalFormat("#.00");
+            System.out.println("Gyroscope X:" + df.format(gxa) + " Y:" +  df.format(gya) + " Z:" +  df.format(gza));
             Thread.sleep(250);
         }
     }
