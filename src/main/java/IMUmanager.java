@@ -21,7 +21,7 @@ public class IMUmanager {
     private static final int GYR = 0x18;
 
     private static final double G_GAIN = 0.07;
-    private static double G_DT = 0.02;
+    private static double G_DT = 0.025;
 
     private static double gxa=0.0;
     private static double gya=0.0;
@@ -41,16 +41,17 @@ public class IMUmanager {
         System.out.println("Temp "+ readTemp());
         for(int i=0; i < 80; i++){
             double start = System.nanoTime();
+            System.out.println("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
 //            int[] vars = readMagReg(0x28);
 //            System.out.println("Magnetometer X:"+ vars[0] + " Y:"+ vars[1] + " Z:"+ vars[2]);
 //            int[] avars = readAccReg(0x28);
 //            System.out.println("Accelerometer X:"+ avars[0] + " Y:"+ avars[1] + " Z:"+ avars[2]);
             updateGyroDPS();
-            DecimalFormat df = new DecimalFormat("#.00");
-            System.out.println("Gyroscope X:" + df.format(gxa) + " Y:" +  df.format(gya) + " Z:" +  df.format(gza));
+            DecimalFormat df = new DecimalFormat("000.00");
+            System.out.println("Gyr X:" + df.format(gxa) + " Y:" +  df.format(gya) + " Z:" +  df.format(gza));
             Thread.sleep(250);
             double stop = System.nanoTime();
-            G_DT = (stop-start)/1000;
+            G_DT = (stop-start)/1000000;
         }
     }
 
