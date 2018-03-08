@@ -47,15 +47,15 @@ public class IMUmanager {
         System.out.println("Temp "+ readTemp());
         for(int i=0; i < 80; i++){
             System.out.println("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
-            long start = System.nanoTime();
+            double start = System.nanoTime();
             updateGyroDPS();
             updateAccDPS();
             updateFilteredXY();
 
             System.out.println("Gyr X:" + df.format(filt_x) + " Y:" +  df.format(filt_y) + " Z:" +  df.format(gza));
             Thread.sleep(250);
-            long stop = System.nanoTime();
-            System.out.println( "Elapsed: " + (stop-start));
+            double stop = System.nanoTime();
+            System.out.println( "Elapsed ms: " + (stop-start)/100000);
 
         }
     }
