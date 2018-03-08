@@ -43,21 +43,21 @@ public class IMUmanager {
 //            System.out.println("Magnetometer X:"+ vars[0] + " Y:"+ vars[1] + " Z:"+ vars[2]);
 //            int[] avars = readAccReg(0x28);
 //            System.out.println("Accelerometer X:"+ avars[0] + " Y:"+ avars[1] + " Z:"+ avars[2]);
-            readGyroDPS(gxa,gya,gza);
-            System.out.print("Gyroscope X:"+ gxa + " Y:"+gya + " Z:"+ gza);
+            updateGyroDPS();
+            System.out.print("Gyroscope X:" + gxa + " Y:" + gya + " Z:" + gza);
             Thread.sleep(500);
         }
     }
 
-    private static void readGyroDPS(double x, double y, double z){
+    private static void updateGyroDPS(){
         int[] gyro = readAccReg(GYR);
         double rgx = (double)gyro[0] * G_GAIN;
         double rgy = (double)gyro[1] * G_GAIN;
         double rgz = (double)gyro[2] * G_GAIN;
 
-        x+=rgx*G_DT;
-        y+=rgy*G_DT;
-        z+=rgz*G_DT;
+        gxa+=rgx*G_DT;
+        gya+=rgy*G_DT;
+        gza+=rgz*G_DT;
     }
 
     private static double readTemp(){
