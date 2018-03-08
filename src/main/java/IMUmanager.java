@@ -45,7 +45,7 @@ public class IMUmanager {
         DecimalFormat df = new DecimalFormat("###.00");
 
         System.out.println("Temp "+ readTemp());
-        for(int i=0; i < 80; i++){
+        for(int i=0; i < 1000; i++){
             System.out.println("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b" +
                     "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
             double start = System.nanoTime();
