@@ -42,6 +42,7 @@ public class IMUmanager {
         bgi_bar = bus.getDevice(0x77); // barometer address is 0x77
 
         initIMU();
+        DecimalFormat df = new DecimalFormat("000.00");
 
         System.out.println("Temp "+ readTemp());
         for(int i=0; i < 80; i++){
@@ -50,11 +51,11 @@ public class IMUmanager {
             updateGyroDPS();
             updateAccDPS();
             updateFilteredXY();
-            DecimalFormat df = new DecimalFormat("000.00");
+
             System.out.println("Gyr X:" + df.format(filt_x) + " Y:" +  df.format(filt_y) + " Z:" +  df.format(gza));
             Thread.sleep(250);
             long stop = System.nanoTime();
-            System.out.println( "Elapsed: " + (stop-start)/1000000000);
+            System.out.println( "Elapsed: " + (stop-start));
 
         }
     }
@@ -65,7 +66,7 @@ public class IMUmanager {
     }
 
     private static void updateGyroDPS() {
-        int[] gyro = readMagReg(GYR);
+        int[] gyro = readAccReg(GYR);
         double rgx = (double)gyro[0] * G_GAIN;
         double rgy = (double)gyro[1] * G_GAIN;
         double rgz = (double)gyro[2] * G_GAIN;
