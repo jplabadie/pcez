@@ -38,13 +38,13 @@ public class IMUmanager {
         enableAcc();
         enableGyr();
         System.out.println("Temp "+ readTemp());
-        for(int i=0; i < 20; i++){
+        for(int i=0; i < 40; i++){
 //            int[] vars = readMagReg(0x28);
 //            System.out.println("Magnetometer X:"+ vars[0] + " Y:"+ vars[1] + " Z:"+ vars[2]);
 //            int[] avars = readAccReg(0x28);
 //            System.out.println("Accelerometer X:"+ avars[0] + " Y:"+ avars[1] + " Z:"+ avars[2]);
             updateGyroDPS();
-            System.out.print("Gyroscope X:" + gxa + " Y:" + gya + " Z:" + gza);
+            System.out.print("\rGyroscope X:" + gxa + " Y:" + gya + " Z:" + gza);
             Thread.sleep(500);
         }
     }
