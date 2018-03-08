@@ -21,7 +21,7 @@ public class IMUmanager {
     private static final int GYR = 0x18; // gyroscope OUT is 0x18 - 0x1D
 
     private static final double G_GAIN = 0.07; // gyroscope noise level
-    private static double G_DT = 0.025; // gyroscope sampling window (initially 250ms)
+    private static double G_DT = 0.0254; // gyroscope sampling window (initially 250ms)
 
     private static double gxa=0.0;
     private static double gya=0.0;
@@ -55,14 +55,14 @@ public class IMUmanager {
             System.out.println("Gyr X:" + df.format(filt_x) + " Y:" +  df.format(filt_y) + " Z:" +  df.format(gza));
             Thread.sleep(250);
             double stop = System.nanoTime();
-            System.out.println( "Elapsed ms: " + (stop-start)/100000);
+            System.out.println( "Elapsed ms: " + (stop-start)/1000000);
 
         }
     }
 
     private static void updateFilteredXY(){
-        filt_x = 0.98*(filt_x + gxa)+(0.02)*axa;
-        filt_y = 0.98*(filt_y + gya)+(0.02)*aya;
+        filt_x = 0.98*(filt_x + gxa * G_DT)+(0.02)*axa;
+        filt_y = 0.98*(filt_y + gya * G_DT)+(0.02)*aya;
     }
 
     private static void updateGyroDPS() {
@@ -102,21 +102,21 @@ public class IMUmanager {
     }
 
     private static void enableMag(){
-        writeMagReg( 0x20, 0b10011100 ); // temp sensor enable, magnetometer hires 50Hz
+        writeMagReg( 0x20, 0b10011100 ); // temp sensor enable, low power, 80Hz ODR
         writeMagReg( 0x21, 0b01000000 ); // full scale to +/- 12 Gauss
-        writeMagReg( 0x22, 0b00000000 ); // set magnetometer to continuous conversion mode
-        writeMagReg( 0x23, 0b00000000 ); // set magnetometer to continuous conversion mode
+        writeMagReg( 0x22, 0b00000000 ); // set magnetometer to continuous update mode
+        writeMagReg( 0x23, 0b00000000 ); // set magnetometer z-axis to low-power mode
     }
 
     private static void enableAcc(){
-        writeAccReg( 0x1F, 0b00111000 );
-        writeAccReg( 0x20, 0b00101000 );
+        writeAccReg( 0x1F, 0b00111000 ); // enable x,y,z axes on accelerometers
+        writeAccReg( 0x20, 0b00101000 ); // +/- 16g mode
     }
 
     private static void enableGyr(){
-        writeAccReg(0x1E, 0b00111000);
-        writeAccReg(0x10, 0b10111000);
-        writeAccReg(0x13, 0b10111000);
+        writeAccReg(0x1E, 0b00111000); // enable x,y,z axes on gyro
+        writeAccReg(0x10, 0b10111000); // set gyro ODR to 47Hz @ 2000dps
+        writeAccReg(0x13, 0b10111000); // swap gyroscope orientation
     }
 
     private static void writeMagReg( int register, int value ){
