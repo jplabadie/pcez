@@ -15,26 +15,49 @@ public class IMUmanager {
     private static I2CDevice bgi_acc;
     private static I2CDevice bgi_bar;
 
+    private static final int MAG = 0x28;
+    private static final int ACC = 0x28;
+    private static final int GYR = 0x18;
+
+    private static final double G_GAIN = 0.07;
+    private static double G_DT = 0.02;
+
+    private static double gxa=0.0;
+    private static double gya=0.0;
+    private static double gza=0.0;
+
+
     public static void main(String[] args) throws InterruptedException, IOException, I2CFactory.UnsupportedBusNumberException {
 
-        bus = I2CFactory.getInstance(I2CBus.BUS_1);
-        bgi_mag = bus.getDevice(0x1c);
-        bgi_acc = bus.getDevice(0x6a);
-        bgi_bar = bus.getDevice(0x77);
+        bus = I2CFactory.getInstance(I2CBus.BUS_1); //IMU sits on bus i2c-1
+        bgi_mag = bus.getDevice(0x1c); // magnetometer address is 0x1c
+        bgi_acc = bus.getDevice(0x6a); // accelerometer and gyroscope address is 0x6a
+        bgi_bar = bus.getDevice(0x77); // barometer address is 0x77
 
         enableMag();
         enableAcc();
         enableGyr();
         System.out.println("Temp "+ readTemp());
         for(int i=0; i < 20; i++){
-            int[] vars = readMagReg(0x28);
-            System.out.println("Magnetometer X:"+ vars[0] + " Y:"+ vars[1] + " Z:"+ vars[2]);
-            int[] avars = readAccReg(0x28);
-            System.out.println("Accelerometer X:"+ avars[0] + " Y:"+ avars[1] + " Z:"+ avars[2]);
-            int[] gvars = readAccReg(0x18);
-            System.out.println("Gyroscope X:"+ gvars[0] + " Y:"+ gvars[1] + " Z:"+ gvars[2]);
+//            int[] vars = readMagReg(0x28);
+//            System.out.println("Magnetometer X:"+ vars[0] + " Y:"+ vars[1] + " Z:"+ vars[2]);
+//            int[] avars = readAccReg(0x28);
+//            System.out.println("Accelerometer X:"+ avars[0] + " Y:"+ avars[1] + " Z:"+ avars[2]);
+            readGyroDPS(gxa,gya,gza);
+            System.out.print("Gyroscope X:"+ gxa + " Y:"+gya + " Z:"+ gza);
             Thread.sleep(500);
         }
+    }
+
+    private static void readGyroDPS(double x, double y, double z){
+        int[] gyro = readAccReg(GYR);
+        double rgx = (double)gyro[0] * G_GAIN;
+        double rgy = (double)gyro[1] * G_GAIN;
+        double rgz = (double)gyro[2] * G_GAIN;
+
+        x+=rgx*G_DT;
+        y+=rgy*G_DT;
+        z+=rgz*G_DT;
     }
 
     private static double readTemp(){
