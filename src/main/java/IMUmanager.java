@@ -40,6 +40,7 @@ public class IMUmanager {
         enableGyr();
         System.out.println("Temp "+ readTemp());
         for(int i=0; i < 80; i++){
+            double start = System.nanoTime();
 //            int[] vars = readMagReg(0x28);
 //            System.out.println("Magnetometer X:"+ vars[0] + " Y:"+ vars[1] + " Z:"+ vars[2]);
 //            int[] avars = readAccReg(0x28);
@@ -48,6 +49,8 @@ public class IMUmanager {
             DecimalFormat df = new DecimalFormat("#.00");
             System.out.println("Gyroscope X:" + df.format(gxa) + " Y:" +  df.format(gya) + " Z:" +  df.format(gza));
             Thread.sleep(250);
+            double stop = System.nanoTime();
+            G_DT = stop-start;
         }
     }
 
