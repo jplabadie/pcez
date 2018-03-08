@@ -50,7 +50,7 @@ public class IMUmanager {
             System.out.println("Gyroscope X:" + df.format(gxa) + " Y:" +  df.format(gya) + " Z:" +  df.format(gza));
             Thread.sleep(250);
             double stop = System.nanoTime();
-            G_DT = stop-start;
+            G_DT = (stop-start)/1000;
         }
     }
 
