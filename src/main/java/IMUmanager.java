@@ -42,27 +42,28 @@ public class IMUmanager {
         bgi_bar = bus.getDevice(0x77); // barometer address is 0x77
 
         initIMU();
-        DecimalFormat df = new DecimalFormat("000.00");
+        DecimalFormat df = new DecimalFormat("###.00");
 
         System.out.println("Temp "+ readTemp());
         for(int i=0; i < 80; i++){
-            System.out.println("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
+            System.out.println("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b" +
+                    "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
             double start = System.nanoTime();
             updateGyroDPS();
             updateAccDPS();
             updateFilteredXY();
 
-            System.out.println("Gyr X:" + df.format(filt_x) + " Y:" +  df.format(filt_y) + " Z:" +  df.format(gza));
+            System.out.print("Gyr X:" + df.format(filt_x) + " Y:" +  df.format(filt_y) + " Z:" +  df.format(gza));
             Thread.sleep(250);
             double stop = System.nanoTime();
-            System.out.println( "Elapsed ms: " + (stop-start)/1000000);
+            //G_DT=(stop-start)/1000000);
 
         }
     }
 
     private static void updateFilteredXY(){
-        filt_x = 0.98*(filt_x + gxa * G_DT)+(0.02)*axa;
-        filt_y = 0.98*(filt_y + gya * G_DT)+(0.02)*aya;
+        filt_x = 0.97*(filt_x + gxa * G_DT)+(0.03)*axa;
+        filt_y = 0.97*(filt_y + gya * G_DT)+(0.03)*aya;
     }
 
     private static void updateGyroDPS() {
