@@ -39,12 +39,12 @@ public class IMUmanager {
     public static void main(String[] args) throws InterruptedException, IOException, I2CFactory.UnsupportedBusNumberException {
 
         bus = I2CFactory.getInstance(I2CBus.BUS_1); //IMU sits on bus i2c-1
-        bgi_mag = bus.getDevice(0x1c); // magnetometer address is 0x1c
-        bgi_acc = bus.getDevice(0x6a); // accelerometer and gyroscope address is 0x6a
+        bgi_mag = bus.getDevice(0x1C); // magnetometer address is 0x1c
+        bgi_acc = bus.getDevice(0x6A); // accelerometer and gyroscope address is 0x6a
         bgi_bar = bus.getDevice(0x77); // barometer address is 0x77
 
         initIMU();
-        DecimalFormat df = new DecimalFormat("###.00");
+        DecimalFormat df = new DecimalFormat("000.00");
 
         System.out.println("Temp "+ readTemp());
         for(int i=0; i < 1000; i++){
@@ -59,7 +59,7 @@ public class IMUmanager {
 //
 //            System.out.print("Gyr X:" + df.format(filt_x) + " Y:" +  df.format(filt_y) + " Z:" +  df.format(gza));
             System.out.println( "Heading: " + df.format(heading) );
-            
+
             Thread.sleep(250);
             double stop = System.nanoTime();
             //G_DT=(stop-start)/1000000);
@@ -159,9 +159,9 @@ public class IMUmanager {
         int[] vars = {0,0,0};
         try {
             bgi_mag.read( register,block,0,6 );
-            vars[0] = (block[1]<<8)|block[0];
-            vars[1] = (block[3]<<8)|block[2];
-            vars[2] = (block[4]<<8)|block[5];
+            vars[0] = block[0] | block[1] << 8;
+            vars[1] = block[2] | block[3] << 8;
+            vars[2] = block[4] | block[5] << 8;
             return vars ;
         } catch (IOException e) {
             System.out.println("shucks");
@@ -174,9 +174,9 @@ public class IMUmanager {
         int[] vars = {0,0,0};
         try {
             bgi_acc.read( register,block,0,6 );
-            vars[0] = (block[1]<<8)|block[0];
-            vars[1] = (block[3]<<8)|block[2];
-            vars[2] = (block[4]<<8)|block[5];
+            vars[0] = block[0] | block[1] << 8;
+            vars[1] = block[2] | block[3] << 8;
+            vars[2] = block[4] | block[5] << 8;
             return vars ;
         } catch (IOException e) {
             System.out.println("shucks");
