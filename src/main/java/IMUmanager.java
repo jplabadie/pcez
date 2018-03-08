@@ -23,16 +23,18 @@ public class IMUmanager {
     private static final double G_GAIN = 0.07; // gyroscope noise level
     private static double G_DT = 0.0254; // gyroscope sampling window (initially 250ms)
 
-    private static double gxa=0.0;
-    private static double gya=0.0;
-    private static double gza=0.0;
+    private static double gxa = 0.0;
+    private static double gya = 0.0;
+    private static double gza = 0.0;
 
-    private static double axa=0.0;
-    private static double aya=0.0;
-    private static double aza=0.0;
+    private static double axa = 0.0;
+    private static double aya = 0.0;
+    private static double aza = 0.0;
 
-    private static double filt_x=0.0;
-    private static double filt_y=0.0;
+    private static double filt_x = 0.0;
+    private static double filt_y = 0.0;
+
+   private static double heading = 0.0;
 
     public static void main(String[] args) throws InterruptedException, IOException, I2CFactory.UnsupportedBusNumberException {
 
@@ -49,16 +51,31 @@ public class IMUmanager {
             System.out.println("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b" +
                     "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
             double start = System.nanoTime();
-            updateGyroDPS();
-            updateAccDPS();
-            updateFilteredXY();
 
-            System.out.print("Gyr X:" + df.format(filt_x) + " Y:" +  df.format(filt_y) + " Z:" +  df.format(gza));
+
+//            updateGyroDPS();
+//            updateAccDPS();
+//            updateFilteredXY();
+//
+//            System.out.print("Gyr X:" + df.format(filt_x) + " Y:" +  df.format(filt_y) + " Z:" +  df.format(gza));
+            System.out.println( "Heading: " + df.format(heading) );
+            
             Thread.sleep(250);
             double stop = System.nanoTime();
             //G_DT=(stop-start)/1000000);
 
         }
+    }
+
+    private static void updateHeading(){
+        int[] mag = readMagReg(MAG);
+        double mag_x = (double) mag[0];
+        double mag_y = (double) mag[1];
+        double mag_z = (double) mag[2];
+
+        heading = 180 * Math.atan2(mag_y,mag_x) / Math.PI;
+        if( heading < 0 )
+            heading += 360;
     }
 
     private static void updateFilteredXY(){
@@ -67,7 +84,7 @@ public class IMUmanager {
     }
 
     private static void updateGyroDPS() {
-        int[] gyro = readAccReg(GYR);
+        int[] gyro = readAccGyroReg(GYR);
         double rgx = (double)gyro[0] * G_GAIN;
         double rgy = (double)gyro[1] * G_GAIN;
         double rgz = (double)gyro[2] * G_GAIN;
@@ -78,7 +95,7 @@ public class IMUmanager {
     }
 
     private static void updateAccDPS(){
-        int[] accel = readAccReg(ACC);
+        int[] accel = readAccGyroReg(ACC);
         axa = (Math.atan2((double)accel[1],(double)accel[2])+ Math.PI) * 57.29578;
         aya = (Math.atan2((double)accel[2],(double)accel[0])+ Math.PI) * 57.29578;
     }
@@ -152,7 +169,7 @@ public class IMUmanager {
         }
     }
 
-    private static int[] readAccReg( int register ){
+    private static int[] readAccGyroReg(int register){
         byte[] block = new byte[6];
         int[] vars = {0,0,0};
         try {
