@@ -58,6 +58,7 @@ public class IMUmanager {
 //            updateFilteredXY();
 //
 //            System.out.print("Gyr X:" + df.format(filt_x) + " Y:" +  df.format(filt_y) + " Z:" +  df.format(gza));
+            updateHeading();
             System.out.println( "Heading: " + df.format(heading) );
 
             Thread.sleep(250);
@@ -139,7 +140,6 @@ public class IMUmanager {
 
     private static void writeMagReg( int register, int value ){
         try {
-            System.out.println("writing to mag register: "+ register+ " value: "+value);
            bgi_mag.write(register, (byte)value);
         } catch (IOException e) {
             System.out.println("Failed to write to Mag Register");
