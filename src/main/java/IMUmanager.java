@@ -12,16 +12,16 @@ import java.text.DecimalFormat;
 public class IMUmanager {
 
     private static I2CBus bus ;
-    private static I2CDevice bgi_mag;
-    private static I2CDevice bgi_acc;
-    private static I2CDevice bgi_bar;
+    private static I2CDevice bgi_mag; // magnetometer
+    private static I2CDevice bgi_acc; // accelerometer and gyroscope
+    private static I2CDevice bgi_bar; // barometer
 
-    private static final int MAG = 0x28;
-    private static final int ACC = 0x28;
-    private static final int GYR = 0x18;
+    private static final int MAG = 0x28; // magnetometer OUT is 0x28 - 0x2D
+    private static final int ACC = 0x28; // accelerometer OUT is 0x28 - 0x2D
+    private static final int GYR = 0x18; // gyroscope OUT is 0x18 - 0x1D
 
-    private static final double G_GAIN = 0.07;
-    private static double G_DT = 0.025;
+    private static final double G_GAIN = 0.07; // gyroscope noise level
+    private static double G_DT = 0.025; // gyroscope sampling window (initially 250ms)
 
     private static double gxa=0.0;
     private static double gya=0.0;
@@ -29,6 +29,7 @@ public class IMUmanager {
 
     private static double axa=0.0;
     private static double aya=0.0;
+    private static double aza=0.0;
 
     private static double filt_x=0.0;
     private static double filt_y=0.0;
@@ -40,22 +41,20 @@ public class IMUmanager {
         bgi_acc = bus.getDevice(0x6a); // accelerometer and gyroscope address is 0x6a
         bgi_bar = bus.getDevice(0x77); // barometer address is 0x77
 
-        enableMag();
-        enableAcc();
-        enableGyr();
+        initIMU();
+
         System.out.println("Temp "+ readTemp());
         for(int i=0; i < 80; i++){
             System.out.println("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
-//            int[] vars = readMagReg(0x28);
-//            System.out.println("Magnetometer X:"+ vars[0] + " Y:"+ vars[1] + " Z:"+ vars[2]);
-//            int[] avars = readAccReg(0x28);
-//            System.out.println("Accelerometer X:"+ avars[0] + " Y:"+ avars[1] + " Z:"+ avars[2]);
+            long start = System.nanoTime();
             updateGyroDPS();
             updateAccDPS();
             updateFilteredXY();
             DecimalFormat df = new DecimalFormat("000.00");
             System.out.println("Gyr X:" + df.format(filt_x) + " Y:" +  df.format(filt_y) + " Z:" +  df.format(gza));
             Thread.sleep(250);
+            long stop = System.nanoTime();
+            System.out.println( "Elapsed: " + (stop-start)/1000000000);
 
         }
     }
@@ -65,8 +64,8 @@ public class IMUmanager {
         filt_y = 0.98*(filt_y + gya)+(0.02)*aya;
     }
 
-    private static void updateGyroDPS(){
-        int[] gyro = readAccReg(GYR);
+    private static void updateGyroDPS() {
+        int[] gyro = readMagReg(GYR);
         double rgx = (double)gyro[0] * G_GAIN;
         double rgy = (double)gyro[1] * G_GAIN;
         double rgz = (double)gyro[2] * G_GAIN;
@@ -93,6 +92,12 @@ public class IMUmanager {
             e.printStackTrace();
         }
         return temperature;
+    }
+
+    private static void initIMU(){
+        enableMag();
+        enableGyr();
+        enableAcc();
     }
 
     private static void enableMag(){
