@@ -27,6 +27,11 @@ public class IMUmanager {
     private static double gya=0.0;
     private static double gza=0.0;
 
+    private static double axa=0.0;
+    private static double aya=0.0;
+
+    private static double filt_x=0.0;
+    private static double filt_y=0.0;
 
     public static void main(String[] args) throws InterruptedException, IOException, I2CFactory.UnsupportedBusNumberException {
 
@@ -40,19 +45,24 @@ public class IMUmanager {
         enableGyr();
         System.out.println("Temp "+ readTemp());
         for(int i=0; i < 80; i++){
-            double start = System.nanoTime();
             System.out.println("\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b");
 //            int[] vars = readMagReg(0x28);
 //            System.out.println("Magnetometer X:"+ vars[0] + " Y:"+ vars[1] + " Z:"+ vars[2]);
 //            int[] avars = readAccReg(0x28);
 //            System.out.println("Accelerometer X:"+ avars[0] + " Y:"+ avars[1] + " Z:"+ avars[2]);
             updateGyroDPS();
+            updateAccDPS();
+            updateFilteredXY();
             DecimalFormat df = new DecimalFormat("000.00");
-            System.out.println("Gyr X:" + df.format(gxa) + " Y:" +  df.format(gya) + " Z:" +  df.format(gza));
+            System.out.println("Gyr X:" + df.format(filt_x) + " Y:" +  df.format(filt_y) + " Z:" +  df.format(gza));
             Thread.sleep(250);
-            double stop = System.nanoTime();
-            G_DT = (stop-start)/1000000000;
+
         }
+    }
+
+    private static void updateFilteredXY(){
+        filt_x = 0.98*(filt_x + gxa)+(0.02)*axa;
+        filt_y = 0.98*(filt_y + gya)+(0.02)*aya;
     }
 
     private static void updateGyroDPS(){
@@ -64,6 +74,12 @@ public class IMUmanager {
         gxa+=rgx*G_DT;
         gya+=rgy*G_DT;
         gza+=rgz*G_DT;
+    }
+
+    private static void updateAccDPS(){
+        int[] accel = readAccReg(ACC);
+        axa = (Math.atan2((double)accel[1],(double)accel[2])+ Math.PI) * 57.29578;
+        aya = (Math.atan2((double)accel[2],(double)accel[0])+ Math.PI) * 57.29578;
     }
 
     private static double readTemp(){
