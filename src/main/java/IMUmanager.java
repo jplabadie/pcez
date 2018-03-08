@@ -34,7 +34,11 @@ public class IMUmanager {
     private static double filt_x = 0.0;
     private static double filt_y = 0.0;
 
-   private static double heading = 0.0;
+    private static double heading = 0.0;
+    private static int MAG_MED_TABLE_SIZE = 9;
+    private static double MAG_LPF_FACTOR = 0.4;
+
+    private static double[] old_mag_values = new double[3];
 
     public static void main(String[] args) throws InterruptedException, IOException, I2CFactory.UnsupportedBusNumberException {
 
@@ -70,13 +74,18 @@ public class IMUmanager {
 
     private static void updateHeading(){
         int[] mag = readMagReg(MAG);
-        double mag_x = (double) mag[0];
-        double mag_y = (double) mag[1];
-        double mag_z = (double) mag[2];
+        double mag_x = (double) mag[0] * MAG_LPF_FACTOR + old_mag_values[0] * (1-MAG_LPF_FACTOR);
+        double mag_y = (double) mag[1] * MAG_LPF_FACTOR + old_mag_values[0] * (1-MAG_LPF_FACTOR);
+        double mag_z = (double) mag[2] * MAG_LPF_FACTOR + old_mag_values[0] * (1-MAG_LPF_FACTOR);
+
+        old_mag_values[0] = mag_x;
+        old_mag_values[1] = mag_y;
+        old_mag_values[2] = mag_z;
 
         heading = 180 * Math.atan2(mag_y,mag_x) / Math.PI;
         if( heading < 0 )
             heading += 360;
+
     }
 
     private static void updateFilteredXY(){
