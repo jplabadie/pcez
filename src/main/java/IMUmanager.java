@@ -51,7 +51,7 @@ public class IMUmanager {
             System.out.println("Gyr X:" + df.format(gxa) + " Y:" +  df.format(gya) + " Z:" +  df.format(gza));
             Thread.sleep(250);
             double stop = System.nanoTime();
-            G_DT = (stop-start)/1000000;
+            G_DT = (stop-start)/1000000000;
         }
     }
 
