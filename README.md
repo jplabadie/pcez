@@ -20,6 +20,11 @@ The IMU 'Barometer' is a Bosch BMP280 Digital Pressure Sensor
 https://cdn-shop.adafruit.com/datasheets/BST-BMP280-DS001-11.pdf
 https://github.com/BoschSensortec/BMP280_driver
 
+### A Special Note
+
+The SD-Card port on the Raspberry Pi allows the SDCard itself to stick out a few milimeters from the port and the board. This means that any movement of the Pi can lead to destruction of the card and potentially damage to the port. Learned this the hard way.
+
+
 
 
 
