@@ -41,10 +41,7 @@ public class IMUmanager {
     private static double[] old_mag_values = new double[3];
 
     public static void main(String[] args) throws InterruptedException, IOException, I2CFactory.UnsupportedBusNumberException {
-        
-        LCD lcd = new LCD();
-        lcd.initLCD();
-
+   
         bus = I2CFactory.getInstance(I2CBus.BUS_1); //IMU sits on bus i2c-1
         bgi_mag = bus.getDevice(0x1C); // magnetometer address is 0x1c
         bgi_acc = bus.getDevice(0x6A); // accelerometer and gyroscope address is 0x6a
